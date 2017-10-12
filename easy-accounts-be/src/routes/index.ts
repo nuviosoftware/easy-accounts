@@ -47,11 +47,11 @@ export class IndexRoute extends BaseRoute {
    */
   public index(req: Request, res: Response, next: NextFunction) {
     //set custom title
-    this.title = "Home | Tour of Heros";
+    this.title = "Home | temp";
 
     //set message
     let options: Object = {
-      "message": "Welcome to the Tour of Heros"
+      "message": "Backend is Running"
     };
 
     //render template

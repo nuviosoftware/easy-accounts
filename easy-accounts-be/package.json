@@ -1,9 +1,9 @@
 {
-  "name": "heros",
-  "description": "The tour of heros",
+  "name": "easy-accounts-be",
+  "description": "Easy-accounts backend",
   "version": "1.0.0",
   "private": true,
-  "author": "Brian Love",
+  "author": "Riccardo Noviello",
   "scripts": {
     "dev": "NODE_ENV=development nodemon ./bin/www",
     "grunt": "grunt",
