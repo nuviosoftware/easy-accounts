@@ -7,7 +7,7 @@ import { BaseRoute } from "./route";
  *
  * @class User
  */
-export class IndexRoute extends BaseRoute {
+export class IndexRoute {
 
   /**
    * Create the routes.
@@ -27,16 +27,6 @@ export class IndexRoute extends BaseRoute {
   }
 
   /**
-   * Constructor
-   *
-   * @class IndexRoute
-   * @constructor
-   */
-  constructor() {
-    super();
-  }
-
-  /**
    * The home page route.
    *
    * @class IndexRoute
@@ -46,15 +36,6 @@ export class IndexRoute extends BaseRoute {
    * @next {NextFunction} Execute the next method.
    */
   public index(req: Request, res: Response, next: NextFunction) {
-    //set custom title
-    this.title = "Home | temp";
-
-    //set message
-    let options: Object = {
-      "message": "Backend is Running"
-    };
-
-    //render template
-    this.render(req, res, "index", options);
+    res.json('Running');
   }
 }
