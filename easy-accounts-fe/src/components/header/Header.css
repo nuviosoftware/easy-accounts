@@ -2,9 +2,8 @@
     text-align: center;  
     background-color: #383838;
     line-height: 28px;
-    padding-bottom: 20px;
-    padding-top: 20px;
-    
+    padding-top: 20px;    
+    margin-bottom:10px;
 }
 
 .Header-component > h1 {
