@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "NODE_ENV=development nodemon ./bin/www",
     "grunt": "grunt",
-    "start": "node ./bin/www"
+    "start": "grunt & node ./bin/www"
   },
   "dependencies": {
     "body-parser": "^1.15.2",
@@ -15,8 +15,7 @@
     "errorhandler": "^1.4.3",
     "express": "^4.14.0",
     "method-override": "^2.3.6",
-    "morgan": "^1.7.0",
-    "pug": "^2.0.0-beta6"
+    "morgan": "^1.7.0"
   },
   "devDependencies": {
     "@types/body-parser": "0.0.33",
