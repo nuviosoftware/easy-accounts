@@ -1,5 +1,7 @@
 import * as React from 'react';
 import './BalanceView.css';
+import NumberFormat from 'react-number-format';
+import Moment from 'react-moment';
 
 
 /**
@@ -15,19 +17,26 @@ interface JSXData<T> extends JSX.IntrinsicAttributes {
  */
 const Row = (props: JSXData<BalanceEntry>): JSX.Element => {
   return (
-    <tr>
-      <td>
+    <tr className="row">
+      <td className="col-sm-3">
+        <Moment date={props.data.date} format="DD MMMM YYYY" />
+      </td>
+      <td className="col-sm-2">
         {props.data.name}
       </td>
-      <td>
-        {props.data.nett}
+      <td className="col-sm-2">
+        <NumberFormat value={props.data.nett} displayType={'text'} thousandSeparator={true} prefix={'£'} />
       </td>
-      <td>
-        {props.data.tax}
+      <td className="col-sm-2">
+        <NumberFormat value={props.data.tax} displayType={'text'} thousandSeparator={true} prefix={'£'} />
+      </td>
+      <td className="col-sm-3">
+        {props.data.tags && props.data.tags.join(", ")}
       </td>
     </tr>
   );
 }
+
 
 /**
  * Represents a BalanceView table
@@ -37,13 +46,16 @@ const BalanceTable = (rows: JSXData<JSX.Element[]>) => {
   return (
     <table className="table table-striped">
       <thead>
-        <tr>
-          <th>Entry</th>
-          <th>Nett</th>
-          <th>Tax</th>
+        <tr className="row">
+          <th className="col-sm-3">Date</th>
+          <th className="col-sm-2">Entry</th>
+          <th className="col-sm-2">Nett</th>
+          <th className="col-sm-2">Tax</th>
+          <th className="col-sm-3">Tags</th>
         </tr>
       </thead>
-      <tbody>{rows.data}</tbody>
+      <tbody>{rows.data.slice(0, rows.data.length-1)}</tbody>
+      <tfoot>{rows.data.slice(rows.data.length-1, rows.data.length)}</tfoot>
     </table>
   );
 }
@@ -58,10 +70,24 @@ class BalanceEntry {
   date: Date;
   nett: number;
   tax: number;
+  tags: string[];
   constructor(values: Object = {}) {
     Object.assign(this, values);
   }
 }
+
+/**
+ * Function to filter BalanceEntry by 'type'.
+ */
+class FilterTypeFunction {
+  constructor(private type: string) {
+
+  };
+  apply(entry: BalanceEntry) {
+    return entry.type === this.type;
+  }
+}
+
 
 /**
  * The React BalanceView Component.
@@ -78,43 +104,86 @@ class BalanceView extends React.Component {
       type: "IN",
       date: new Date(),
       nett: 10000,
-      tax: 2000
+      tax: 2000,
+      tags: ['sales', 'client1']
     }, {
       id: 2,
       name: "client2 invoice1",
       type: "IN",
       date: new Date(),
       nett: 5000,
-      tax: 1000
+      tax: 1000,
+      tags: ['sales', 'client2']
     }, {
       id: 3,
       name: "insurance",
       type: "OUT",
       date: new Date(),
       nett: 400,
-      tax: 80
+      tax: 80,
+      tags: ['insurance']
     }]
   }
 
-  render() {
-    let inRows = this.data.map(entry => {
+  /**
+   * Filter entries on the given array for the given condition.
+   * 
+   * @param arr 
+   * @param cond 
+   */
+  private filterEntries(arr: BalanceEntry[], cond: FilterTypeFunction): JSX.Element[] {
+    return arr.filter(entry => cond.apply(entry)).map(entry => {
       return <Row
         key={entry.id}
         data={entry}
       />
     });
+  }
 
-    let outRows:any[] = [];
+  /**
+   * Builds an additional JSX.Element which represents the TOTAL of the given array.
+   * @param arr 
+   */
+  private buildSumEntry(arr: JSX.Element[]): JSX.Element {
+    let total: BalanceEntry = {
+      id: -1,
+      name: "TOTAL",
+      type: "",
+      date: new Date(),
+      nett: 0,
+      tax: 0,
+      tags: []
+    };
+
+    arr.forEach(el => {
+      total.nett += el.props.data.nett;
+      total.tax += el.props.data.tax;
+    });
+
+    return <Row
+      key={total.id}
+      data={total}
+    />
+  }
+
+  render() {
+    // array of incoming entries
+    let inRows = this.filterEntries(this.data, new FilterTypeFunction("IN"));
+    inRows.push(this.buildSumEntry(inRows));
+
+    // array of outgoing entries
+    let outRows = this.filterEntries(this.data, new FilterTypeFunction("OUT"));
+    outRows.push(this.buildSumEntry(outRows));
 
 
     return (
-      <div>
+      <div className="BalanceView-component">
         <h3>Balance view</h3>
-        <p>INCOMING</p>
+        <h5>INCOMING</h5>
         <BalanceTable
           data={inRows} />
-          <hr/>
-        <p>OUTGOING</p>
+        <hr />
+        <h5>OUTGOING</h5>
         <BalanceTable
           data={outRows} />
       </div>

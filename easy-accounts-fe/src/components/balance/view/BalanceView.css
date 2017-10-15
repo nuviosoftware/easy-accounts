@@ -1,0 +1,9 @@
+.BalanceView-component > h5 {
+    color: #C59D18 !important;    
+    margin-top: 50px;
+}
+
+.BalanceView-component > table > tfoot {
+    color: red;
+    font-weight: 800;
+}
