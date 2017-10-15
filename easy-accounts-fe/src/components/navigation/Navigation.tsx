@@ -8,18 +8,18 @@ class Navigation extends React.Component {
       <div className="Nav-component">
         <Nav>
           <NavItem>
-            <NavLink href="#">Balance</NavLink>
+            <NavLink href="/">Balance</NavLink>
           </NavItem>
           <NavItem>
-            <NavLink href="#">Add Entry</NavLink>
+            <NavLink href="/addEntry">Add Entry</NavLink>
           </NavItem>
           <NavItem>
-            <NavLink disabled href="#">Projections</NavLink>
+            <NavLink disabled href="/projections">Projections</NavLink>
           </NavItem>
           <NavItem>
-            <NavLink disabled href="#">Remainders</NavLink>
+            <NavLink disabled href="/remainders">Remainders</NavLink>
           </NavItem>
-        </Nav>       
+        </Nav>
       </div>
     );
   }
