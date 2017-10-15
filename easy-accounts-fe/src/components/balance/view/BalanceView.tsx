@@ -79,7 +79,7 @@ class BalanceEntry {
 /**
  * Function to filter BalanceEntry by 'type'.
  */
-class FilterTypeFunction {
+export class FilterTypeFunction {
   constructor(private type: string) {
 
   };
@@ -92,7 +92,7 @@ class FilterTypeFunction {
 /**
  * The React BalanceView Component.
  */
-class BalanceView extends React.Component {
+export class BalanceView extends React.Component {
   private data: BalanceEntry[];
 
   constructor() {
@@ -131,7 +131,7 @@ class BalanceView extends React.Component {
    * @param arr 
    * @param cond 
    */
-  private filterEntries(arr: BalanceEntry[], cond: FilterTypeFunction): JSX.Element[] {
+  public filterEntries(arr: BalanceEntry[], cond: FilterTypeFunction): JSX.Element[] {
     return arr.filter(entry => cond.apply(entry)).map(entry => {
       return <Row
         key={entry.id}
@@ -144,7 +144,7 @@ class BalanceView extends React.Component {
    * Builds an additional JSX.Element which represents the TOTAL of the given array.
    * @param arr 
    */
-  private buildSumEntry(arr: JSX.Element[]): JSX.Element {
+  public buildSumEntry(arr: JSX.Element[]): JSX.Element {
     let total: BalanceEntry = {
       id: -1,
       name: "TOTAL",
@@ -190,4 +190,4 @@ class BalanceView extends React.Component {
     );
   }
 }
-export default BalanceView;
+
