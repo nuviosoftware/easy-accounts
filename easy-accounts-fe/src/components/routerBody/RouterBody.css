@@ -1,0 +1,14 @@
+.RouterBody-component {
+    padding-left: 5%;
+    padding-right: 5%;
+    height: 100%;
+}
+
+.RouterBody-intro {
+    font-size: 11pt;
+}
+
+.RouterBody-component > h2 {
+    color: #424A60;
+    font-size: 24pt;
+}
