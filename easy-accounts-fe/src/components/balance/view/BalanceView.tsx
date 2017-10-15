@@ -191,3 +191,6 @@ export class BalanceView extends React.Component {
   }
 }
 
+
+
+export default BalanceView;
