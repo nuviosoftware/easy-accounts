@@ -1,118 +1,111 @@
-import * as bodyParser from "body-parser";
-import * as cookieParser from "cookie-parser";
 import * as express from "express";
+import * as compression from "compression";  // compresses requests
+import * as session from "express-session";
+import * as bodyParser from "body-parser";
 import * as logger from "morgan";
+import * as errorHandler from "errorhandler";
+import * as lusca from "lusca";
+import * as dotenv from "dotenv";
+import * as mongo from "connect-mongo";
+import * as flash from "express-flash";
 import * as path from "path";
-import errorHandler = require("errorhandler");
-import methodOverride = require("method-override");
+import * as mongoose from "mongoose";
+import * as passport from "passport";
+import expressValidator = require("express-validator");
 
-import { IndexRoute } from "./routes/index";
+
+const MongoStore = mongo(session);
 
 /**
- * The server.
- *
- * @class Server
+ * Load environment variables from .env file, where API keys and passwords are configured.
  */
-export class Server {
+dotenv.config({ path: ".env.example" });
 
-  public app: express.Application;
 
-  /**
-   * Bootstrap the application.
-   *
-   * @class Server
-   * @method bootstrap
-   * @static
-   * @return {ng.auto.IInjectorService} Returns the newly created injector for this app.
-   */
-  public static bootstrap(): Server {
-    console.log("Starting server...");
-    return new Server();
-  }
+/**
+ * Controllers (route handlers).
+ */
+import * as homeController from "./controllers/home";
+import * as apiController from "./controllers/api";
 
-  /**
-   * Constructor.
-   *
-   * @class Server
-   * @constructor
-   */
-  constructor() {
-    //create expressjs application
-    this.app = express();
+/**
+ * Create Express server.
+ */
+const app = express();
 
-    //configure application
-    this.config();
+/**
+ * Connect to MongoDB.
+ */
+// mongoose.Promise = global.Promise;
+mongoose.connect(process.env.MONGODB_URI || process.env.MONGOLAB_URI);
 
-    //add routes
-    this.routes();
+mongoose.connection.on("error", () => {
+  console.log("MongoDB connection error. Please make sure MongoDB is running.");
+  process.exit();
+});
 
-    //add api
-    this.api();
-  }
 
-  /**
-   * Create REST API routes
-   *
-   * @class Server
-   * @method api
-   */
-  public api() {
-    //empty for now
-  }
 
-  /**
-   * Configure application
-   *
-   * @class Server
-   * @method config
-   */
-  public config() {
-    //add static paths
-    this.app.use(express.static(path.join(__dirname, "public")));
+/**
+ * Express configuration.
+ */
+app.set("port", process.env.PORT || 3000);
+app.use(compression());
+app.use(logger("dev"));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(expressValidator());
+app.use(session({
+  resave: true,
+  saveUninitialized: true,
+  secret: process.env.SESSION_SECRET,
+  store: new MongoStore({
+    url: process.env.MONGODB_URI || process.env.MONGOLAB_URI,
+    autoReconnect: true
+  })
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
+app.use(lusca.xframe("SAMEORIGIN"));
+app.use(lusca.xssProtection(true));
+app.use((req, res, next) => {
+  res.locals.user = req.user;
+  next();
+});
+app.use(express.static(path.join(__dirname, "public"), { maxAge: 31557600000 }));
 
-    //mount logger
-    this.app.use(logger("dev"));
+/**
+ * Primary app routes.
+ */
+app.get("/", homeController.index);
 
-    //mount json form parser
-    this.app.use(bodyParser.json());
+/**
+ * API examples routes.
+ */
+app.get("/api", apiController.getApi);
+app.get("/api/facebook", passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFacebook);
 
-    //mount query string parser
-    this.app.use(bodyParser.urlencoded({
-      extended: true
-    }));
+/**
+ * OAuth authentication routes. (Sign in)
+ */
+app.get("/auth/facebook", passport.authenticate("facebook", { scope: ["email", "public_profile"] }));
+app.get("/auth/facebook/callback", passport.authenticate("facebook", { failureRedirect: "/login" }), (req, res) => {
+  res.redirect(req.session.returnTo || "/");
+});
 
-    //mount cookie parser middleware
-    this.app.use(cookieParser("SECRET_GOES_HERE"));
 
-    //mount override?
-    this.app.use(methodOverride());
+/**
+ * Error Handler. Provides full stack - remove for production
+ */
+app.use(errorHandler());
 
-    // catch 404 and forward to error handler
-    this.app.use(function(err: any, req: express.Request, res: express.Response, next: express.NextFunction) {
-        err.status = 404;
-        next(err);
-    });
+/**
+ * Start Express server.
+ */
+app.listen(app.get("port"), () => {
+  console.log(("  App is running at http://localhost:%d in %s mode"), app.get("port"), app.get("env"));
+  console.log("  Press CTRL-C to stop\n");
+});
 
-    //error handling
-    this.app.use(errorHandler());
-  }
-
-  /**
-   * Create and return Router.
-   *
-   * @class Server
-   * @method config
-   * @return void
-   */
-  private routes() {
-    let router: express.Router;
-    router = express.Router();
-
-    //IndexRoute
-    new IndexRoute().create(router);
-
-    //use router middleware
-    this.app.use(router);
-  }
-
-}
+module.exports = app;
