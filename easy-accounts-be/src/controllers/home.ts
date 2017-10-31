@@ -5,5 +5,5 @@ import { Request, Response } from "express";
  * Home page.
  */
 export let index = (req: Request, res: Response) => {
-  res.json("{message: 'Server running'}")
+  res.json("{message: 'Server running'}");
 };

@@ -10,7 +10,6 @@ import * as mongo from "connect-mongo";
 import * as flash from "express-flash";
 import * as path from "path";
 import * as mongoose from "mongoose";
-import * as passport from "passport";
 import expressValidator = require("express-validator");
 
 
@@ -64,8 +63,6 @@ app.use(session({
     autoReconnect: true
   })
 }));
-app.use(passport.initialize());
-app.use(passport.session());
 app.use(flash());
 app.use(lusca.xframe("SAMEORIGIN"));
 app.use(lusca.xssProtection(true));
@@ -79,21 +76,6 @@ app.use(express.static(path.join(__dirname, "public"), { maxAge: 31557600000 }))
  * Primary app routes.
  */
 app.get("/", homeController.index);
-
-/**
- * API examples routes.
- */
-app.get("/api", apiController.getApi);
-app.get("/api/facebook", passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFacebook);
-
-/**
- * OAuth authentication routes. (Sign in)
- */
-app.get("/auth/facebook", passport.authenticate("facebook", { scope: ["email", "public_profile"] }));
-app.get("/auth/facebook/callback", passport.authenticate("facebook", { failureRedirect: "/login" }), (req, res) => {
-  res.redirect(req.session.returnTo || "/");
-});
-
 
 /**
  * Error Handler. Provides full stack - remove for production
