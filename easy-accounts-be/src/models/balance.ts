@@ -2,14 +2,13 @@ import * as bcrypt from "bcrypt-nodejs";
 import * as crypto from "crypto";
 import * as mongoose from "mongoose";
 
-export type UserModel = mongoose.Document & {
+export type BalanceModel = mongoose.Document & {
   email: string,
   password: string,
   passwordResetToken: string,
   passwordResetExpires: Date,
 
   facebook: string,
-  tokens: AuthToken[],
 
   profile: {
     name: string,
@@ -18,17 +17,9 @@ export type UserModel = mongoose.Document & {
     website: string,
     picture: string
   },
-
-  comparePassword: (candidatePassword: string, cb: (err: any, isMatch: any) => {}) => void,
-  gravatar: (size: number) => string
 };
 
-export type AuthToken = {
-  accessToken: string,
-  kind: string
-};
-
-const userSchema = new mongoose.Schema({
+const balanceSchema = new mongoose.Schema({
   email: { type: String, unique: true },
   password: String,
   passwordResetToken: String,
@@ -48,6 +39,6 @@ const userSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-// export const User: UserType = mongoose.model<UserType>('User', userSchema);
-const User = mongoose.model("User", userSchema);
-export default User;
+// export const Balance: BalanceType = mongoose.model<BalanceType>('Balance', balanceSchema);
+const Balance = mongoose.model("Balance", balanceSchema);
+export default Balance;

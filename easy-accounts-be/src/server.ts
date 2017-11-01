@@ -26,6 +26,7 @@ dotenv.config({ path: ".env.example" });
  */
 import * as homeController from "./controllers/home";
 import * as apiController from "./controllers/api";
+import * as balanceController from "./controllers/balance";
 
 /**
  * Create Express server.
@@ -76,6 +77,9 @@ app.use(express.static(path.join(__dirname, "public"), { maxAge: 31557600000 }))
  * Primary app routes.
  */
 app.get("/", homeController.index);
+app.get("/api/v1/balance", balanceController.getAll);
+
+
 
 /**
  * Error Handler. Provides full stack - remove for production
