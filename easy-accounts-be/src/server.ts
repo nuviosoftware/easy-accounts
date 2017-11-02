@@ -13,7 +13,6 @@ import * as mongoose from "mongoose";
 import expressValidator = require("express-validator");
 
 
-const MongoStore = mongo(session);
 
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
@@ -24,26 +23,13 @@ dotenv.config({ path: ".env.example" });
 /**
  * Controllers (route handlers).
  */
-import * as homeController from "./controllers/home";
-import * as apiController from "./controllers/api";
-import * as balanceController from "./controllers/balance";
+import * as homeController from "./controllers/homeController";
+import * as entryController from "./controllers/entryController";
 
 /**
  * Create Express server.
  */
 const app = express();
-
-/**
- * Connect to MongoDB.
- */
-// mongoose.Promise = global.Promise;
-mongoose.connect(process.env.MONGODB_URI || process.env.MONGOLAB_URI);
-
-mongoose.connection.on("error", () => {
-  console.log("MongoDB connection error. Please make sure MongoDB is running.");
-  process.exit();
-});
-
 
 
 /**
@@ -55,15 +41,7 @@ app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
-app.use(session({
-  resave: true,
-  saveUninitialized: true,
-  secret: process.env.SESSION_SECRET,
-  store: new MongoStore({
-    url: process.env.MONGODB_URI || process.env.MONGOLAB_URI,
-    autoReconnect: true
-  })
-}));
+
 app.use(flash());
 app.use(lusca.xframe("SAMEORIGIN"));
 app.use(lusca.xssProtection(true));
@@ -77,7 +55,7 @@ app.use(express.static(path.join(__dirname, "public"), { maxAge: 31557600000 }))
  * Primary app routes.
  */
 app.get("/", homeController.index);
-app.get("/api/v1/balance", balanceController.getAll);
+app.get("/api/v1/entries", entryController.getAll);
 
 
 
