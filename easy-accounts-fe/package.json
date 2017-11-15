@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "easy-accounts",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -21,6 +21,7 @@
     "test": "react-scripts-ts test --env=jsdom",
     "eject": "react-scripts-ts eject"
   },
+  "proxy": "http://localhost:5000",
   "devDependencies": {
     "@types/jest": "^21.1.0",
     "@types/node": "^8.0.29",
