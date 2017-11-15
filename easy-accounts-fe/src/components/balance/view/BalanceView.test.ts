@@ -58,7 +58,7 @@ it('build sum entry with nett and tax', () => {
     const array: JSX.Element[] = balanceView.filterEntries(testData, new NoFilterfunction());
     const sum = balanceView.buildSumEntry(array);
     expect(sum.props.data.nett).toEqual(15400);    
-    expect(sum.props.data.tax).toEqual(3800);
+    expect(sum.props.data.tax).toEqual(3080);
 });
 
 
