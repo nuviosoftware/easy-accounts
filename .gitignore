@@ -1,0 +1,21 @@
+**/node_modules
+**/.vscode
+**/.tscache
+**/lib-cov
+**/*.seed
+**/*.log
+**/*.csv
+**/*.dat
+**/*.out
+**/*.pid
+**/*.gz
+**/*.swp
+# Ignore built ts files
+**/dist/**/*
+
+
+**/pids
+**/logs
+**/results
+**/tmp
+
