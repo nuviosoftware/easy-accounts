@@ -13,4 +13,7 @@ A React application with TypeScript.
 'npm install'
 `npm start`
 
+# run tests
+`npm run test`
+
 TODO: add a script to start everything.
